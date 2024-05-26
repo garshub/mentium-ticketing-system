@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "nylas": "^7.5.0",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/pg": "^8.11.6"
+  }
+}
