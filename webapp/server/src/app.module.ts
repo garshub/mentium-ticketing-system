@@ -7,6 +7,10 @@ import { TicketsModule } from './tickets/tickets.module';
 import { MessagesModule } from './messages/messages.module';
 import { ThreadsModule } from './threads/threads.module';
 import { TicketHistoryModule } from './ticket-history/ticket-history.module';
+import { Message } from './messages/messages.entity';
+import { Ticket } from './tickets/tickets.entity';
+import { TicketHistory } from './ticket-history/ticket-history.entity';
+import { Thread } from './threads/threads.entity';
 
 @Module({
   imports: [
@@ -20,7 +24,7 @@ import { TicketHistoryModule } from './ticket-history/ticket-history.module';
       username: 'postgres',
       password: 'password',
       database: 'platform',
-      entities: [User],
+      entities: [User, Message, Ticket, TicketHistory, Thread],
       synchronize: true,
     }),
     UsersModule,
