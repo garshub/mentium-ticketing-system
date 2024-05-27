@@ -2,12 +2,24 @@ import React, { useState } from "react";
 import { Box, Paper } from "@mui/material";
 import UserDetails from "./UserDetails";
 import TicketList from "./TicketList";
+import TicketView from "./TicketView";
 
 const Dashboard: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleTicketClick = (ticket: any) => {
+    setSelectedTicket(ticket);
+    setIsCollapsed(false);
+  };
+
+  const handleBackToTicketList = () => {
+    setSelectedTicket(null);
+    setIsCollapsed(false);
   };
 
   return (
@@ -44,7 +56,14 @@ const Dashboard: React.FC = () => {
           style={{ height: "100%", display: "flex", flexDirection: "column" }}
         >
           <Box p={2} flexGrow={1} overflow="auto">
-            <TicketList />
+            {selectedTicket ? (
+              <TicketView
+                ticket={selectedTicket}
+                onBack={handleBackToTicketList}
+              />
+            ) : (
+              <TicketList onTicketClick={handleTicketClick} />
+            )}
           </Box>
         </Paper>
       </Box>

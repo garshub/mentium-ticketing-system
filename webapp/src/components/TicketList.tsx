@@ -8,7 +8,7 @@ const tickets = [
     subject: "Conversation with Sofia Eames",
     requester: "Sofia Eames",
     requested: "< 1 min ago",
-    priority: "low",
+    priority: "Low",
     status: "New",
   },
   {
@@ -104,7 +104,11 @@ const segregateTicketsByStatus = (tickets: any[]) => {
   }, {});
 };
 
-const TicketList: React.FC = () => {
+interface TicketListProps {
+  onTicketClick: (ticket: any) => void;
+}
+
+const TicketList: React.FC<TicketListProps> = ({ onTicketClick }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredTickets, setFilteredTickets] = useState(tickets);
 
@@ -120,6 +124,7 @@ const TicketList: React.FC = () => {
       setFilteredTickets(filtered);
     }
   };
+
   const ticketsByStatus = segregateTicketsByStatus(filteredTickets);
 
   return (
@@ -140,6 +145,7 @@ const TicketList: React.FC = () => {
           key={status}
           status={status}
           tickets={ticketsByStatus[status]}
+          onTicketClick={onTicketClick}
         />
       ))}
     </Box>

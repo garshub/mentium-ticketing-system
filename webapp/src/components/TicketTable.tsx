@@ -24,6 +24,7 @@ interface Ticket {
 interface TicketTableProps {
   status: string;
   tickets: Ticket[];
+  onTicketClick: (ticket: Ticket) => void;
 }
 
 const statusColors: { [key: string]: string } = {
@@ -33,7 +34,11 @@ const statusColors: { [key: string]: string } = {
   Solved: "green",
 };
 
-const TicketTable: React.FC<TicketTableProps> = ({ status, tickets }) => {
+const TicketTable: React.FC<TicketTableProps> = ({
+  status,
+  tickets,
+  onTicketClick,
+}) => {
   return (
     <Box mb={4}>
       <Typography variant="h6" gutterBottom>
@@ -107,7 +112,11 @@ const TicketTable: React.FC<TicketTableProps> = ({ status, tickets }) => {
           </TableHead>
           <TableBody>
             {tickets.map((ticket) => (
-              <TableRow key={ticket.id}>
+              <TableRow
+                key={ticket.id}
+                onClick={() => onTicketClick(ticket)}
+                style={{ cursor: "pointer" }}
+              >
                 <TableCell align="left">
                   <Chip
                     label={`#${ticket.id}`}

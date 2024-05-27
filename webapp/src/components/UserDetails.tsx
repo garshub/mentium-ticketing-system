@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Avatar, Button, IconButton } from "@mui/material";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { Menu } from "@mui/icons-material";
 
 interface UserDetailsProps {
   isCollapsed: boolean;
@@ -14,7 +14,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
   const user = {
     name: "John Doe",
     email: "john.doe@example.com",
-    avatarUrl: "https://via.placeholder.com/150",
+    avatarUrl: "logo.png",
   };
 
   return (
@@ -28,7 +28,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
     >
       <Box display="flex" justifyContent="center" width="100%">
         <IconButton onClick={onToggleCollapse} size="small">
-          {isCollapsed ? <ArrowForward /> : <ArrowBack />}
+          <Menu /> {}
         </IconButton>
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={1}>
