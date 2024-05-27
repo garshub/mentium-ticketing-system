@@ -4,6 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { User } from './users/users.entity';
 import { TicketsModule } from './tickets/tickets.module';
+import { MessagesModule } from './messages/messages.module';
+import { ThreadsModule } from './threads/threads.module';
+import { TicketHistoryModule } from './ticket-history/ticket-history.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { TicketsModule } from './tickets/tickets.module';
     }),
     UsersModule,
     TicketsModule,
+    MessagesModule,
+    ThreadsModule,
+    TicketHistoryModule,
   ],
   controllers: [],
   providers: [],

@@ -1,5 +1,12 @@
-import { UserRole } from 'src/common/utilities/enums';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { TicketHistory } from 'src/ticket-history/ticket-history.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -15,10 +22,12 @@ export class User {
   @Column()
   name: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.AGENT,
-  })
-  role: UserRole;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
+  @OneToMany(() => TicketHistory, (ticketHistory) => ticketHistory.ticket)
+  ticketHistory: TicketHistory[];
 }
