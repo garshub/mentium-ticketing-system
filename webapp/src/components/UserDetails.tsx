@@ -1,8 +1,16 @@
 import React from "react";
-import { Box, Typography, Avatar, Button } from "@mui/material";
+import { Box, Typography, Avatar, Button, IconButton } from "@mui/material";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
-const UserDetails: React.FC = () => {
-  // Sample user data
+interface UserDetailsProps {
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+const UserDetails: React.FC<UserDetailsProps> = ({
+  isCollapsed,
+  onToggleCollapse,
+}) => {
   const user = {
     name: "John Doe",
     email: "john.doe@example.com",
@@ -14,21 +22,38 @@ const UserDetails: React.FC = () => {
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
+      alignItems="center"
       height="100%"
+      p={2}
     >
-      <Box textAlign="center" p={2}>
+      <Box display="flex" justifyContent="center" width="100%">
+        <IconButton onClick={onToggleCollapse} size="small">
+          {isCollapsed ? <ArrowForward /> : <ArrowBack />}
+        </IconButton>
+      </Box>
+      <Box display="flex" flexDirection="column" alignItems="center" mt={1}>
         <Avatar
           alt={user.name}
           src={user.avatarUrl}
-          sx={{ width: 100, height: 100, mb: 2, mx: "auto" }}
+          sx={{
+            width: isCollapsed ? 40 : 100,
+            height: isCollapsed ? 40 : 100,
+            mb: isCollapsed ? 1 : 2,
+          }}
         />
-        <Typography variant="h5">{user.name}</Typography>
-        <Typography variant="body1">{user.email}</Typography>
+        {!isCollapsed && (
+          <>
+            <Typography variant="h5">{user.name}</Typography>
+            <Typography variant="body1">{user.email}</Typography>
+          </>
+        )}
       </Box>
-      <Box p={2}>
-        <Button variant="contained" color="primary" fullWidth>
-          Logout
-        </Button>
+      <Box mt={2} width="100%">
+        {!isCollapsed && (
+          <Button variant="contained" color="primary" fullWidth>
+            Logout
+          </Button>
+        )}
       </Box>
     </Box>
   );

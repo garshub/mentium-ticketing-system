@@ -17,7 +17,7 @@ interface Ticket {
   subject: string;
   requester: string;
   requested: string;
-  channel: string;
+  priority: string;
   status: string;
 }
 
@@ -91,6 +91,18 @@ const TicketTable: React.FC<TicketTableProps> = ({ status, tickets }) => {
               >
                 Requested
               </TableCell>
+              <TableCell
+                style={{
+                  width: "10%",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                  height: 40,
+                  fontWeight: "bold",
+                }}
+              >
+                Priority
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -109,6 +121,7 @@ const TicketTable: React.FC<TicketTableProps> = ({ status, tickets }) => {
                 <TableCell align="left">{ticket.subject}</TableCell>
                 <TableCell align="left">{ticket.requester}</TableCell>
                 <TableCell align="left">{ticket.requested}</TableCell>
+                <TableCell align="left">{ticket.priority}</TableCell>
               </TableRow>
             ))}
           </TableBody>

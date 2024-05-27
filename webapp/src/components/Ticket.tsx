@@ -7,7 +7,7 @@ interface TicketProps {
   subject: string;
   requester: string;
   requested: string;
-  channel: string;
+  priority: string;
   status: string;
 }
 
@@ -16,7 +16,7 @@ const Ticket: React.FC<TicketProps> = ({
   subject,
   requester,
   requested,
-  channel,
+  priority,
   status,
 }) => {
   const statusColors: { [key: string]: string } = {
@@ -44,7 +44,7 @@ const Ticket: React.FC<TicketProps> = ({
           {requester}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {channel}
+          {priority}
         </Typography>
         <Box display="flex" justifyContent="flex-end">
           <Box

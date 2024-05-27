@@ -1,27 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Paper } from "@mui/material";
 import UserDetails from "./UserDetails";
 import TicketList from "./TicketList";
 
 const Dashboard: React.FC = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleToggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <Box p={3} height="100vh" display="flex">
       <Box
-        width="10%"
-        maxWidth="300px"
-        minWidth="300px"
+        width={isCollapsed ? "80px" : "300px"}
         display="flex"
         flexDirection="column"
-        mr={2}
+        transition="width 0.3s"
       >
         <Paper
           elevation={3}
-          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+          style={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
-          <UserDetails />
+          <UserDetails
+            isCollapsed={isCollapsed}
+            onToggleCollapse={handleToggleCollapse}
+          />
         </Paper>
       </Box>
-      <Box flexGrow={1} display="flex" flexDirection="column">
+      <Box
+        flexGrow={1}
+        display="flex"
+        flexDirection="column"
+        ml={isCollapsed ? 1 : 2}
+      >
         <Paper
           elevation={3}
           style={{ height: "100%", display: "flex", flexDirection: "column" }}
