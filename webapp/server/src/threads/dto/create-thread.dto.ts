@@ -8,4 +8,8 @@ export class CreateThreadDto {
 
   @IsNotEmpty()
   ticket: Ticket;
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }

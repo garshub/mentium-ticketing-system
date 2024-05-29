@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
 import { Message } from './messages.entity';
 
 @Injectable()
@@ -27,19 +26,5 @@ export class MessagesService {
       throw new NotFoundException(`Message with ID ${id} not found`);
     }
     return message;
-  }
-
-  async update(
-    id: string,
-    updateMessageDto: UpdateMessageDto,
-  ): Promise<Message> {
-    const message = await this.findOne(id);
-    Object.assign(message, updateMessageDto);
-    return this.messageRepository.save(message);
-  }
-
-  async remove(id: string): Promise<void> {
-    const message = await this.findOne(id);
-    await this.messageRepository.remove(message);
   }
 }

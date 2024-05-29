@@ -5,6 +5,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { TicketPriority, TicketStatus } from 'src/common/utilities/enums';
 import { Ticket } from './tickets.entity';
+
 @Injectable()
 export class TicketsService {
   constructor(
@@ -22,7 +23,7 @@ export class TicketsService {
     return await this.ticketRepository.save(newTicket);
   }
 
-  async addMessageToTicket(ticketId: number, message: any) {
+  async addMessageToTicket(ticketId: string, message: any) {
     const ticket = await this.ticketRepository.findOneBy({ id: ticketId });
     if (ticket) {
       ticket.messages.push(message);
@@ -41,32 +42,30 @@ export class TicketsService {
     });
   }
 
-  async findOne(id: number): Promise<Ticket> {
-    const ticket = await this.ticketRepository.findOneBy({ id });
+  async findOne(id: string): Promise<Ticket> {
+    const ticket = await this.ticketRepository.findOne({
+      where: { id },
+      relations: ['thread', 'user', 'messages', 'ticketHistory'],
+    });
     if (!ticket) {
       throw new NotFoundException(`Ticket with ID ${id} not found`);
     }
     return ticket;
   }
 
-  async update(id: number, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
+  async update(id: string, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
     const ticket = await this.findOne(id);
     Object.assign(ticket, updateTicketDto);
     return this.ticketRepository.save(ticket);
   }
 
-  async remove(id: number): Promise<void> {
-    const ticket = await this.findOne(id);
-    await this.ticketRepository.remove(ticket);
-  }
-
-  async updateStatus(id: number, status: TicketStatus): Promise<Ticket> {
+  async updateStatus(id: string, status: TicketStatus): Promise<Ticket> {
     const ticket = await this.findOne(id);
     ticket.status = status;
     return this.ticketRepository.save(ticket);
   }
 
-  async updatePriority(id: number, priority: TicketPriority): Promise<Ticket> {
+  async updatePriority(id: string, priority: TicketPriority): Promise<Ticket> {
     const ticket = await this.findOne(id);
     ticket.priority = priority;
     return this.ticketRepository.save(ticket);

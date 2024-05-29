@@ -16,6 +16,9 @@ export class Message {
   @Column()
   content: string;
 
+  @Column()
+  senderName: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

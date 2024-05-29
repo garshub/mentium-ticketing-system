@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
 
 @Controller('messages')
 export class MessagesController {
@@ -28,18 +19,5 @@ export class MessagesController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.messagesService.findOne(id);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateMessageDto: UpdateMessageDto,
-  ) {
-    return this.messagesService.update(id, updateMessageDto);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.messagesService.remove(id);
   }
 }

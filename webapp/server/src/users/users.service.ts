@@ -10,12 +10,17 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
-  }
-
   findOne(id: number): Promise<User> {
     return this.usersRepository.findOneBy({ id });
+  }
+
+  findTicketsForUser(id: number): Promise<User> {
+    return this.usersRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['ticket'],
+    });
   }
 
   create(user: User): Promise<User> {
@@ -25,9 +30,5 @@ export class UsersService {
   async update(id: number, user: User): Promise<User> {
     await this.usersRepository.update(id, user);
     return this.usersRepository.findOneBy({ id });
-  }
-
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
   }
 }

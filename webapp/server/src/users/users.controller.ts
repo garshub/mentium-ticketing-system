@@ -1,28 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
-import {
-  fetchMessageList,
-  fetchRecentThreads,
-  searchInbox,
-} from 'src/common/utilities/nylas';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { User } from './users.entity';
 
 @Controller('users')
 export class UsersController {
-  //   constructor(private readonly appService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   ping(): string {
     return 'Route Alive';
   }
 
-  @Get('/threads')
-  async threads(): Promise<string> {
-    const result = await fetchRecentThreads();
-    return result;
-  }
+  //create auth routes
 
-  @Get('/messages')
-  async messages(): Promise<string> {
-    const result = await fetchMessageList('');
-    return result;
+  @Get(':id')
+  async getTicketsByUserId(@Param('id') id: number): Promise<User> {
+    return await this.usersService.findTicketsForUser(id);
   }
 }

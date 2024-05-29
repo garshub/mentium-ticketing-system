@@ -16,15 +16,15 @@ export const nylas = new Nylas(NylasConfig);
 
 export async function fetchMessageList(pageToken: string): Promise<any> {
   try {
-    console.log('Inside fetch message list');
     const result = await nylas.messages.list({
       identifier,
       queryParams: { limit: 100, ...(pageToken && { pageToken }) },
     });
-
+    console.log('NYLAS LOG: Emails fetched');
     return result;
   } catch (error) {
-    console.error('Error to complete search:', error);
+    console.log('NYLAS ERROR: Error while fetching emails');
+    console.error(error);
   }
 }
 
@@ -39,7 +39,8 @@ export async function searchInbox(): Promise<any> {
 
     return result;
   } catch (error) {
-    console.error('Error to complete search:', error);
+    console.log('NYLAS ERROR: Error to complete search:');
+    console.error(error);
   }
 }
 
@@ -55,6 +56,24 @@ export async function fetchRecentThreads(): Promise<any> {
     // console.log('Recent Threads Count:', threads);
     return threads;
   } catch (error) {
-    console.error('Error fetching threads:', error);
+    console.log('NYLAS ERROR: Error fetching threads:');
+    console.error(error);
+  }
+}
+
+export async function sendEmail(
+  sendEmailParams: SendEmailParams,
+): Promise<any> {
+  try {
+    console.log(sendEmailParams);
+    const result = await nylas.messages.send({
+      identifier,
+      requestBody: sendEmailParams,
+    });
+
+    return result;
+  } catch (error) {
+    console.log('NYLAS ERROR: Error while sending email');
+    console.log(error);
   }
 }

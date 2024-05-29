@@ -16,7 +16,7 @@ import {
 @Entity()
 export class Ticket {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @OneToOne(() => Thread, (thread) => thread.ticket)
   thread: Thread;
