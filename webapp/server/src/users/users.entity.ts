@@ -1,4 +1,4 @@
-import { TicketHistory } from 'src/ticket-history/ticket-history.entity';
+import { Ticket } from 'src/tickets/tickets.entity';
 import {
   Column,
   CreateDateColumn,
@@ -28,6 +28,6 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToMany(() => TicketHistory, (ticketHistory) => ticketHistory.ticket)
-  ticketHistory: TicketHistory[];
+  @OneToMany(() => Ticket, (ticket) => ticket.user)
+  ticket: Ticket[];
 }

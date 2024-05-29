@@ -11,6 +11,12 @@ import { Message } from './messages/messages.entity';
 import { Ticket } from './tickets/tickets.entity';
 import { TicketHistory } from './ticket-history/ticket-history.entity';
 import { Thread } from './threads/threads.entity';
+import { UsersController } from './users/users.controller';
+import { TicketsController } from './tickets/tickets.controller';
+import { MessagesController } from './messages/messages.controller';
+import { TicketHistoryController } from './ticket-history/ticket-history.controller';
+import { ThreadsController } from './threads/threads.controller';
+import { EmailsModule } from './emails/emails.module';
 
 @Module({
   imports: [
@@ -32,8 +38,14 @@ import { Thread } from './threads/threads.entity';
     MessagesModule,
     ThreadsModule,
     TicketHistoryModule,
+    EmailsModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [
+    UsersController,
+    TicketsController,
+    MessagesController,
+    TicketHistoryController,
+    ThreadsController,
+  ],
 })
 export class AppModule {}

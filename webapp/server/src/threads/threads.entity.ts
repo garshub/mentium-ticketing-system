@@ -13,7 +13,7 @@ export class Thread {
   @PrimaryColumn()
   id: string;
 
-  @OneToOne(() => Ticket, { onDelete: 'CASCADE' })
+  @OneToOne(() => Ticket, (ticket) => ticket.thread, { onDelete: 'CASCADE' })
   @JoinColumn()
   ticket: Ticket;
 

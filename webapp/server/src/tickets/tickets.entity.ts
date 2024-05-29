@@ -18,8 +18,7 @@ export class Ticket {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Thread, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @OneToOne(() => Thread, (thread) => thread.ticket)
   thread: Thread;
 
   @Column()
@@ -28,7 +27,12 @@ export class Ticket {
   @Column()
   requesterEmail: string;
 
-  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @Column({
+    default: '',
+  })
+  subject: string;
+
+  @ManyToOne(() => User, (user) => user.ticket, { onDelete: 'SET NULL' })
   @JoinColumn()
   user: User;
 

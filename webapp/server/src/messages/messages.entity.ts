@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
@@ -19,5 +20,6 @@ export class Message {
   createdAt: Date;
 
   @ManyToOne(() => Ticket, (ticket) => ticket.messages, { onDelete: 'CASCADE' })
+  @JoinColumn()
   ticket: Ticket;
 }

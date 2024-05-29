@@ -14,18 +14,18 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  //   findOne(id: number): Promise<User> {
-  //     return this.usersRepository.findOne(id);
-  //   }
+  findOne(id: number): Promise<User> {
+    return this.usersRepository.findOneBy({ id });
+  }
 
   create(user: User): Promise<User> {
     return this.usersRepository.save(user);
   }
 
-  //   async update(id: number, user: User): Promise<User> {
-  //     await this.usersRepository.update(id, user);
-  //     return this.usersRepository.findOne(id);
-  //   }
+  async update(id: number, user: User): Promise<User> {
+    await this.usersRepository.update(id, user);
+    return this.usersRepository.findOneBy({ id });
+  }
 
   async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);

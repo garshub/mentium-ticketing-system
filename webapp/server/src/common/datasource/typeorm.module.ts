@@ -1,6 +1,10 @@
 import { DataSource } from 'typeorm';
 import { Global, Module } from '@nestjs/common';
 import { User } from '../../users/users.entity';
+import { Message } from 'src/messages/messages.entity';
+import { Ticket } from 'src/tickets/tickets.entity';
+import { Thread } from 'src/threads/threads.entity';
+import { TicketHistory } from 'src/ticket-history/ticket-history.entity';
 
 @Global() // makes the module available globally for other modules once imported in the app modules
 @Module({
@@ -19,11 +23,11 @@ import { User } from '../../users/users.entity';
             username: 'postgres',
             password: 'password',
             database: 'platform',
-            entities: [User],
+            entities: [User, Message, Ticket, Thread, TicketHistory],
             synchronize: true,
             // entities: [`${__dirname}/../**/**.entity{.ts,.js}`], // this will automatically load all entity file in the src folder
           });
-          await dataSource.initialize(); // initialize the data source
+          await dataSource.initialize(); // initialize the dataß source
           console.log('Database connected successfully');
           return dataSource;
         } catch (error) {
