@@ -59,3 +59,8 @@ export interface EmailMessageParams {
   to: { name: string; email: string }[];
   replyToMessageId: string;
 }
+
+export interface LoginParams {
+  email: string;
+  password: string;
+}

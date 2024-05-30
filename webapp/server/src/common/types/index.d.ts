@@ -13,3 +13,14 @@ declare type MessageProp = {
   senderName: string;
   subject: string;
 };
+
+declare type LoginParams = {
+  email: string;
+  password: string;
+};
+
+declare type SignupParams = {
+  email: string;
+  password: string;
+  name: string;
+};

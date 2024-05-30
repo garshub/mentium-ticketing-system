@@ -1,20 +1,25 @@
+// UserDetails.jsx
 import React from "react";
 import { Box, Typography, Avatar, Button, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
+import { UserProp } from "../types";
 
 interface UserDetailsProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  userProp: UserProp | null;
+  onLogout: () => void;
 }
 
 const UserDetails: React.FC<UserDetailsProps> = ({
   isCollapsed,
   onToggleCollapse,
+  userProp,
+  onLogout,
 }) => {
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatarUrl: "logo.png",
+  const handleLogout = () => {
+    // Call onLogout function when logout button is clicked
+    onLogout();
   };
 
   return (
@@ -32,25 +37,34 @@ const UserDetails: React.FC<UserDetailsProps> = ({
         </IconButton>
       </Box>
       <Box display="flex" flexDirection="column" alignItems="center" mt={1}>
-        <Avatar
-          alt={user.name}
-          src={user.avatarUrl}
-          sx={{
-            width: isCollapsed ? 40 : 100,
-            height: isCollapsed ? 40 : 100,
-            mb: isCollapsed ? 1 : 2,
-          }}
-        />
-        {!isCollapsed && (
+        {userProp && ( // Check if userProp exists before rendering
           <>
-            <Typography variant="h5">{user.name}</Typography>
-            <Typography variant="body1">{user.email}</Typography>
+            <Avatar
+              alt={userProp.name}
+              src={"logo.png"}
+              sx={{
+                width: isCollapsed ? 40 : 100,
+                height: isCollapsed ? 40 : 100,
+                mb: isCollapsed ? 1 : 2,
+              }}
+            />
+            {!isCollapsed && (
+              <>
+                <Typography variant="h5">{userProp.name}</Typography>
+                <Typography variant="body1">{userProp.email}</Typography>
+              </>
+            )}
           </>
         )}
       </Box>
       <Box mt={2} width="100%">
         {!isCollapsed && (
-          <Button variant="contained" color="primary" fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         )}

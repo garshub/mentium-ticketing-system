@@ -18,7 +18,10 @@ export function transformApiResponse(apiResponse: any): MessageProp[] {
     id: message.id,
     content: removeAfterFirstOccurrence(message.snippet, '\r\n'),
     createdAt: new Date(message.createdAt * 1000).toISOString(),
-    senderName: message.from[0].name,
+    senderName:
+      message.from[0].email == 'mentiumcodechallenge@outlook.com'
+        ? 'Mentium Ticket Support'
+        : message.from[0].name,
     subject: message.subject,
   }));
 }

@@ -1,19 +1,40 @@
 import React, { useState } from "react";
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import { LoginParams, UserProp } from "../types";
+import { useCookies } from "react-cookie";
+import { toast } from "react-toastify";
+import { loginUser } from "../hooks/hooks";
 
 interface LoginProps {
-  onLogin: () => void;
+  onLogin: (userProp: UserProp, token: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [, setCookie] = useCookies(["token"]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically validate the input and authenticate the user
-    // For simplicity, we'll just call the onLogin function
-    onLogin();
+    try {
+      const loginParams: LoginParams = {
+        email: email,
+        password: password,
+      };
+      const response = await loginUser(loginParams);
+      const token = response.data.access_token;
+      setCookie("token", token, { path: "/" });
+      toast.success("Login Successful");
+      const userProp: UserProp = {
+        id: response.data.userId,
+        email: email,
+        name: response.data.userName,
+      };
+      onLogin(userProp, token);
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast.error("Invalid email or password. Please try again.");
+    }
   };
 
   return (

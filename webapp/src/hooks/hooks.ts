@@ -1,10 +1,15 @@
 import axios from "axios";
 import { useQuery } from "react-query";
-import { EmailMessageParams, TicketUpdateDtoParams } from "../types";
+import {
+  EmailMessageParams,
+  LoginParams,
+  TicketUpdateDtoParams,
+} from "../types";
 
 const BASE_URL = "http://localhost:3000/";
 const TICKETS = "tickets/";
 const EMAILS = "emails/";
+const AUTH = "auth/";
 
 const fetchAllTickets = async () => {
   const result = await axios.get(BASE_URL + TICKETS);
@@ -51,4 +56,41 @@ export const fetchMessagesFromThread = async (threadId: string) => {
     threadId
   );
   return result.data;
+};
+
+export const useFetchMessagesFromThread = (threadId: string) => {
+  return useQuery([
+    "messagesByThreadId",
+    fetchMessagesFromThread,
+    () => fetchMessagesFromThread(threadId),
+  ]);
+};
+
+export const fetchUserData = async (token: string) => {
+  try {
+    const response = await axios.get(BASE_URL + AUTH + "user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw error;
+  }
+};
+
+export const loginUser = async (loginParams: LoginParams) => {
+  try {
+    const response = await axios.post(BASE_URL + AUTH + "login", loginParams);
+
+    if (!response.data || !response.data.access_token) {
+      throw new Error("Access token not found in the response");
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw error;
+  }
 };

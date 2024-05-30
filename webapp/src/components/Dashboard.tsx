@@ -3,10 +3,14 @@ import { Box, Paper } from "@mui/material";
 import UserDetails from "./UserDetails";
 import TicketList from "./TicketList";
 import TicketView from "./TicketView";
+import { UserProp } from "../types";
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{
+  userProp: UserProp | null;
+  onLogout: () => void;
+}> = ({ userProp, onLogout }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
 
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -42,6 +46,8 @@ const Dashboard: React.FC = () => {
           <UserDetails
             isCollapsed={isCollapsed}
             onToggleCollapse={handleToggleCollapse}
+            userProp={userProp}
+            onLogout={onLogout}
           />
         </Paper>
       </Box>

@@ -17,6 +17,7 @@ import { MessagesController } from './messages/messages.controller';
 import { TicketHistoryController } from './ticket-history/ticket-history.controller';
 import { ThreadsController } from './threads/threads.controller';
 import { EmailsModule } from './emails/emails.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { EmailsModule } from './emails/emails.module';
     ThreadsModule,
     TicketHistoryModule,
     EmailsModule,
+    AuthModule,
   ],
   controllers: [
     UsersController,

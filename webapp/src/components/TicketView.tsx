@@ -50,13 +50,15 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
           );
           setMessages(sortedMessages);
         }
+        toast.success("Messages fetched successfully!");
       } catch (error) {
+        toast.error("Error fetching messages");
         console.error("Error fetching messages:", error);
       }
     };
 
     fetchData();
-  }, [ticket]);
+  }, [ticket.thread.id]);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
@@ -99,7 +101,7 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
   };
 
   const handleSubmit = async () => {
-    // Handle form submission, e.g., update ticket details in the database
+    // Handle form submission
     console.log("Status:", status, "Priority:", priority);
     try {
       // Create a DTO object with form data
