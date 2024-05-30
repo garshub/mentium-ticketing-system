@@ -11,27 +11,14 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-
-interface Ticket {
-  id: number;
-  subject: string;
-  requester: string;
-  requested: string;
-  priority: string;
-  status: string;
-}
-
-interface TicketTableProps {
-  status: string;
-  tickets: Ticket[];
-  onTicketClick: (ticket: Ticket) => void;
-}
+import { TicketTableProps } from "../types";
+import DateFormatter from "./DateFormatter";
 
 const statusColors: { [key: string]: string } = {
-  New: "orange",
-  Open: "red",
-  Pending: "blue",
-  Solved: "green",
+  NEW: "orange",
+  OPEN: "red",
+  PENDING: "blue",
+  CLOSED: "green",
 };
 
 const TicketTable: React.FC<TicketTableProps> = ({
@@ -94,7 +81,7 @@ const TicketTable: React.FC<TicketTableProps> = ({
                   fontWeight: "bold",
                 }}
               >
-                Requested
+                Requested At
               </TableCell>
               <TableCell
                 style={{
@@ -128,8 +115,10 @@ const TicketTable: React.FC<TicketTableProps> = ({
                   />
                 </TableCell>
                 <TableCell align="left">{ticket.subject}</TableCell>
-                <TableCell align="left">{ticket.requester}</TableCell>
-                <TableCell align="left">{ticket.requested}</TableCell>
+                <TableCell align="left">{ticket.requesterName}</TableCell>
+                <TableCell align="left">
+                  {<DateFormatter dateTimeString={ticket.createdAt} />}
+                </TableCell>
                 <TableCell align="left">{ticket.priority}</TableCell>
               </TableRow>
             ))}

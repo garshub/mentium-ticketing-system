@@ -23,7 +23,7 @@ const Ticket: React.FC<TicketProps> = ({
     New: "orange",
     Open: "red",
     Pending: "blue",
-    Solved: "green",
+    Closed: "green",
   };
 
   return (

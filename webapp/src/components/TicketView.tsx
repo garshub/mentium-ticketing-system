@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,47 +9,81 @@ import {
   InputAdornment,
   Select,
   MenuItem,
-  Menu,
   FormControl,
   InputLabel,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Message from "./Message";
-
-interface Message {
-  id: number;
-  text: string;
-  timestamp: string;
-  sender: string;
-}
-
-interface TicketViewProps {
-  ticket: any;
-  onBack: () => void;
-}
+import {
+  EmailMessageParams,
+  MessageProp,
+  TicketUpdateDtoParams,
+  TicketViewProps,
+} from "../types";
+import { MdMail } from "react-icons/md";
+import { FaRegUserCircle } from "react-icons/fa";
+import {
+  createMessageAndSendEmail,
+  fetchMessagesFromThread,
+  updateTicket,
+} from "../hooks/hooks";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      sender: "John",
-      text: "Initial message",
-      timestamp: "2023-05-26 10:00",
-    },
-    // Add more initial messages if needed
-  ]);
+  const [messages, setMessages] = useState<MessageProp[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [status, setStatus] = useState(ticket.status);
   const [priority, setPriority] = useState(ticket.priority);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
+  // Sort messages on component mount or when ticket changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchThreadMessages = await fetchMessagesFromThread(
+          ticket.thread.id
+        );
+        if (fetchThreadMessages) {
+          const sortedMessages = fetchThreadMessages.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          setMessages(sortedMessages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
 
-    const newMsg: Message = {
-      id: messages.length + 1,
-      text: newMessage,
-      sender: "John",
-      timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
+    fetchData();
+  }, [ticket]);
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === "") return;
+    const lastMessage = messages[messages.length - 1];
+
+    //send email
+    const emailMessageParams: EmailMessageParams = {
+      subject: lastMessage.subject,
+      body: newMessage,
+      to: [{ name: ticket.requesterName, email: ticket.requesterEmail }],
+      replyTo: [
+        {
+          name: "Mentium Ticket Support",
+          email: "mentiumcodechallenge@outlook.com",
+        },
+      ],
+      replyToMessageId: lastMessage.id.toString(),
+    };
+
+    const sendEmailResult = await createMessageAndSendEmail(emailMessageParams);
+
+    const newMsg: MessageProp = {
+      id: sendEmailResult.data.id,
+      content: newMessage,
+      senderName: "Mentium Ticket Support",
+      createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
+      subject: sendEmailResult.data.subject,
     };
 
     setMessages([...messages, newMsg]);
@@ -64,9 +98,24 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
     setPriority(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Handle form submission, e.g., update ticket details in the database
     console.log("Status:", status, "Priority:", priority);
+    try {
+      // Create a DTO object with form data
+      const ticketUpdateDto: TicketUpdateDtoParams = {
+        status: status,
+        priority: priority,
+      };
+
+      // Call the API to update the ticket
+      await updateTicket(ticket.id, ticketUpdateDto);
+      console.log("Ticket Updated!");
+      toast.success("Ticket Successfully Updated");
+    } catch (error) {
+      toast.error("Error Updating Ticket.");
+      console.error("Error updating ticket:", error);
+    }
   };
 
   return (
@@ -79,7 +128,7 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
       </Box>
       <Box display="flex" flexGrow={1} overflow="hidden">
         <Paper
-          elevation={3}
+          elevation={0}
           style={{
             flex: 1,
             display: "flex",
@@ -105,21 +154,13 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
               {messages.map((msg) => (
                 <Message
                   key={msg.id}
-                  sender={msg.sender}
-                  text={msg.text}
-                  timestamp={msg.timestamp}
+                  sender={msg.senderName}
+                  text={msg.content}
+                  timestamp={msg.createdAt}
                 />
               ))}
             </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              mt={2}
-              p={1}
-              borderTop={1}
-              borderColor="grey.300"
-              borderRadius={1}
-            >
+            <Paper>
               <TextField
                 label="New message"
                 variant="outlined"
@@ -143,11 +184,11 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
                   style: { height: "auto" },
                 }}
               />
-            </Box>
+            </Paper>
           </Box>
         </Paper>
         <Paper
-          elevation={3}
+          elevation={0}
           style={{
             width: "400px",
             padding: "20px",
@@ -163,14 +204,25 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
             borderRadius={1}
             p={2}
             mb={2}
+            maxHeight={"130px"}
           >
-            <Typography variant="h6">Requester Details:</Typography>
-            <Typography variant="subtitle1">
-              Name: {ticket.requester}
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              Requester Details:
             </Typography>
-            <Typography variant="subtitle1">
-              Email: {ticket.requesterEmail}
-            </Typography>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: "8px", mb: 1 }}
+            >
+              <FaRegUserCircle />
+              <Typography variant="subtitle1">
+                {ticket.requesterName}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <MdMail />
+              <Typography variant="subtitle1">
+                {ticket.requesterEmail}
+              </Typography>
+            </Box>
           </Box>
           {/* Ticket Actions: */}
           <Box flexGrow={1} mb={2}>
@@ -182,10 +234,10 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
                 value={status}
                 onChange={handleStatusChange}
               >
-                <MenuItem value="New">New</MenuItem>
-                <MenuItem value="Open">Open</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="Closed">Closed</MenuItem>
+                <MenuItem value="NEW">New</MenuItem>
+                <MenuItem value="OPEN">Open</MenuItem>
+                <MenuItem value="PENDING">Pending</MenuItem>
+                <MenuItem value="CLOSED">Closed</MenuItem>
               </Select>
             </FormControl>
 
@@ -197,9 +249,9 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
                 value={priority}
                 onChange={handlePriorityChange}
               >
-                <MenuItem value="Low">Low</MenuItem>
-                <MenuItem value="Medium">Medium</MenuItem>
-                <MenuItem value="High">High</MenuItem>
+                <MenuItem value="LOW">Low</MenuItem>
+                <MenuItem value="MEDIUM">Medium</MenuItem>
+                <MenuItem value="HIGH">High</MenuItem>
               </Select>
             </FormControl>
             <Box display="flex" justifyContent="flex-end">

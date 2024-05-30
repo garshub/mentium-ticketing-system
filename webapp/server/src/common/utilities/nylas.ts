@@ -18,7 +18,7 @@ export async function fetchMessageList(pageToken: string): Promise<any> {
   try {
     const result = await nylas.messages.list({
       identifier,
-      queryParams: { limit: 100, ...(pageToken && { pageToken }) },
+      queryParams: { limit: 200, ...(pageToken && { pageToken }) },
     });
     console.log('NYLAS LOG: Emails fetched');
     return result;
@@ -65,15 +65,48 @@ export async function sendEmail(
   sendEmailParams: SendEmailParams,
 ): Promise<any> {
   try {
-    console.log(sendEmailParams);
     const result = await nylas.messages.send({
       identifier,
       requestBody: sendEmailParams,
     });
+    console.log(
+      `NYLAS LOG: Email Sucessfully sent to ${sendEmailParams.to[0].email}`,
+    );
 
     return result;
   } catch (error) {
     console.log('NYLAS ERROR: Error while sending email');
     console.log(error);
+  }
+}
+
+export async function fetchSingleMessage(messageId: string): Promise<any> {
+  try {
+    const result = await nylas.messages.find({
+      identifier,
+      messageId,
+    });
+    console.log(result);
+    console.log('NYLAS LOG: Email fetched');
+    return result;
+  } catch (error) {
+    console.log('NYLAS ERROR: Error while fetching emails');
+    console.error(error);
+  }
+}
+
+export async function fetchAllMessagesFromThread(
+  threadId: string,
+): Promise<any> {
+  try {
+    const result = await nylas.messages.list({
+      identifier,
+      queryParams: { threadId: threadId },
+    });
+    console.log('NYLAS LOG: Emails fetched for ThreadID: ' + threadId);
+    return result;
+  } catch (error) {
+    console.log('NYLAS ERROR: Error while fetching emails');
+    console.error(error);
   }
 }

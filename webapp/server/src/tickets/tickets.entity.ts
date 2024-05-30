@@ -5,12 +5,14 @@ import { TicketHistory } from 'src/ticket-history/ticket-history.entity';
 import { User } from 'src/users/users.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -57,4 +59,10 @@ export class Ticket {
     cascade: true,
   })
   ticketHistory: TicketHistory[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 }

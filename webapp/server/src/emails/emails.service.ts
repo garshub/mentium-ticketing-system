@@ -1,27 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Email } from 'src/common/interfaces/email.interface';
-import { fetchMessageList } from 'src/common/utilities/nylas';
+import { fetchMessageList, sendEmail } from 'src/common/utilities/nylas';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
-import { Message } from 'src/messages/messages.entity';
 import { MessagesService } from 'src/messages/messages.service';
 import { CreateThreadDto } from 'src/threads/dto/create-thread.dto';
-import { Thread } from 'src/threads/threads.entity';
 import { ThreadsService } from 'src/threads/threads.service';
 import { CreateTicketDto } from 'src/tickets/dto/create-ticket.dto';
-import { Ticket } from 'src/tickets/tickets.entity';
 import { TicketsService } from 'src/tickets/tickets.service';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class EmailsService {
   constructor(
-    @InjectRepository(Message)
-    private messagesRepository: Repository<Message>,
-    @InjectRepository(Thread)
-    private threadsRepository: Repository<Thread>,
-    @InjectRepository(Ticket)
-    private ticketsRepository: Repository<Ticket>,
     private threadsService: ThreadsService,
     private messagesService: MessagesService,
     private ticketsService: TicketsService,
@@ -53,9 +42,7 @@ export class EmailsService {
         const content = email.snippet;
         const requesterName = email.from[0].name;
         const existingThread = await this.threadsService.findOne(threadId);
-        const existingMessage = await this.messagesRepository.findOneBy({
-          id: msgId,
-        });
+        const existingMessage = await this.messagesService.findOne(msgId);
         if (!existingMessage) {
           if (existingThread) {
             //create message and attach to ticket
@@ -91,7 +78,32 @@ export class EmailsService {
               requesterName,
               newTicket,
             );
-            await this.messagesService.create(createMessageDto);
+            const createMsgResult =
+              await this.messagesService.create(createMessageDto);
+
+            //Auto Acknowledge message
+            const emailBody = `Hi ${requesterName}, \n\n We have recieved your email and a suppport agent will get back to you soon. Please reply on this email thread only. \n\n Best,\n Your Mentium TicketSupport Team`;
+            const emailParams: SendEmailParams = {
+              subject,
+              body: emailBody,
+              replyTo: [
+                {
+                  name: 'Mentium Ticket Support',
+                  email: 'mentiumcodechallenge@outlook.com',
+                },
+              ],
+              to: [{ name: requesterName, email: requesterEmail }],
+              replyToMessageId: createMsgResult.id,
+            };
+            const sendEmailResult = await sendEmail(emailParams);
+            //Attach Message to ticket
+            const createEmailMessageDto = new CreateMessageDto(
+              sendEmailResult.data.id,
+              emailBody,
+              'Mentium Ticket Support',
+              newTicket,
+            );
+            await this.messagesService.create(createEmailMessageDto);
           }
         }
       }

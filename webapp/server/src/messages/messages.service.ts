@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -23,7 +23,7 @@ export class MessagesService {
   async findOne(id: string): Promise<Message> {
     const message = await this.messageRepository.findOneBy({ id });
     if (!message) {
-      throw new NotFoundException(`Message with ID ${id} not found`);
+      console.log(`Message with ID ${id} not found`);
     }
     return message;
   }

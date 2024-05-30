@@ -1,129 +1,67 @@
-import React, { useState } from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  TextField,
+  Typography,
+  FormControl,
+  Select,
+  MenuItem,
+  Grid,
+} from "@mui/material";
 import TicketTable from "./TicketTable";
+import { useFetchAllTickets } from "../hooks/hooks";
+import { Ticket, TicketListProps } from "../types";
 
-const tickets = [
-  {
-    id: 815,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 816,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 817,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 818,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 819,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 820,
-    subject: "Conversation with Sofia Eames",
-    requester: "Sofia Eames",
-    requested: "< 1 min ago",
-    priority: "Low",
-    status: "New",
-  },
-  {
-    id: 160,
-    subject: "Care and maintenance instructions",
-    requester: "James Keenan",
-    requested: "Aug 10, 2020",
-    priority: "High",
-    status: "Open",
-  },
-  {
-    id: 629,
-    subject: "Promo Codes?",
-    requester: "Web User d23f9ccdfd097dcf58e4977e",
-    requested: "Jun 18, 2021",
-    priority: "Low",
-    status: "Open",
-  },
-  {
-    id: 575,
-    subject: "Refund on order",
-    requester: "Amy Skomaker",
-    requested: "Apr 26, 2021",
-    priority: "High",
-    status: "Pending",
-  },
-  {
-    id: 58,
-    subject: "Price change",
-    requester: "Scarlett Simpson",
-    requested: "Jun 01, 2020",
-    priority: "Medium",
-    status: "Pending",
-  },
-  {
-    id: 833,
-    subject: "What's your return policy?",
-    requester: "Felix Pierce",
-    requested: "about 1 hour ago",
-    priority: "High",
-    status: "Solved",
-  },
-];
+const segregateTicketsByStatus = (tickets: Ticket[]) => {
+  const orderedStatusKeys = ["NEW", "OPEN", "PENDING", "CLOSED"];
 
-const segregateTicketsByStatus = (tickets: any[]) => {
-  return tickets.reduce((acc: any, ticket) => {
-    const { status } = ticket;
-    if (!acc[status]) {
-      acc[status] = [];
-    }
-    acc[status].push(ticket);
+  return orderedStatusKeys.reduce((acc: any, status) => {
+    acc[status] = tickets.filter((ticket) => ticket.status === status);
     return acc;
   }, {});
 };
 
-interface TicketListProps {
-  onTicketClick: (ticket: any) => void;
-}
-
 const TicketList: React.FC<TicketListProps> = ({ onTicketClick }) => {
+  const { data: tickets = [], isLoading, error } = useFetchAllTickets();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredTickets, setFilteredTickets] = useState(tickets);
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterPriority, setFilterPriority] = useState("All");
+
+  useEffect(() => {
+    setFilteredTickets(tickets);
+  }, [tickets]);
+
+  useEffect(() => {
+    const filtered = tickets.filter((ticket) =>
+      ticket.id.toString().includes(searchQuery)
+    );
+    setFilteredTickets(filtered);
+  }, [searchQuery, tickets]);
+
+  useEffect(() => {
+    const filtered = tickets
+      .filter((ticket) =>
+        filterStatus === "All" ? true : ticket.status === filterStatus
+      )
+      .filter((ticket) =>
+        filterPriority === "All" ? true : ticket.priority === filterPriority
+      );
+    setFilteredTickets(filtered);
+  }, [filterStatus, filterPriority, tickets]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    if (query === "") {
-      setFilteredTickets(tickets);
-    } else {
-      const filtered = tickets.filter((ticket) =>
-        ticket.id.toString().includes(query)
-      );
-      setFilteredTickets(filtered);
-    }
+    setSearchQuery(event.target.value);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    console.log(error);
+    return <div>Error: {(error as Error).message}</div>;
+  }
 
   const ticketsByStatus = segregateTicketsByStatus(filteredTickets);
 
@@ -132,14 +70,48 @@ const TicketList: React.FC<TicketListProps> = ({ onTicketClick }) => {
       <Typography variant="h4" gutterBottom>
         Mentium Ticket Support Platform
       </Typography>
-      <TextField
-        label="Search by Ticket #"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        fullWidth
-        margin="normal"
-      />
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Search by Ticket #"
+            variant="outlined"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <FormControl fullWidth>
+            <Select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as string)}
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="All">All Status</MenuItem>
+              <MenuItem value="NEW">New</MenuItem>
+              <MenuItem value="OPEN">Open</MenuItem>
+              <MenuItem value="PENDING">Pending</MenuItem>
+              <MenuItem value="CLOSED">Closed</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <FormControl fullWidth>
+            <Select
+              value={filterPriority}
+              onChange={(e) => setFilterPriority(e.target.value as string)}
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="All">All Priority</MenuItem>
+              <MenuItem value="LOW">Low</MenuItem>
+              <MenuItem value="MEDIUM">Medium</MenuItem>
+              <MenuItem value="HIGH">High</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
       {Object.keys(ticketsByStatus).map((status) => (
         <TicketTable
           key={status}

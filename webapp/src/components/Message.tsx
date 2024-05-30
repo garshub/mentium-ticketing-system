@@ -1,5 +1,6 @@
 import React from "react";
-import { Typography, Paper } from "@mui/material";
+import { Typography, Box } from "@mui/material";
+import DateFormatter from "./DateFormatter";
 
 interface MessageProps {
   text: string;
@@ -9,19 +10,23 @@ interface MessageProps {
 
 const Message: React.FC<MessageProps> = ({ text, timestamp, sender }) => {
   return (
-    <Paper
+    <Box
       style={{
         padding: "10px",
         marginBottom: "10px",
-        backgroundColor: "#f5f5f5",
+        // backgroundColor: "#f5f5f5",
       }}
     >
-      <Typography variant="h6">{sender}</Typography>
-      <Typography variant="body1">{text}</Typography>
-      <Typography variant="caption" color="textSecondary">
-        {timestamp}
-      </Typography>
-    </Paper>
+      <Box style={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography variant="body1" style={{ fontWeight: "bold" }}>
+          {sender}
+        </Typography>
+        <Typography variant="caption" color="textSecondary">
+          <DateFormatter dateTimeString={timestamp} />
+        </Typography>
+      </Box>
+      <Typography variant="body2">{text}</Typography>
+    </Box>
   );
 };
 
