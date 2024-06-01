@@ -12,8 +12,6 @@ export function removeAfterFirstOccurrence(
 }
 
 export function transformApiResponse(apiResponse: any): MessageProp[] {
-  console.log(apiResponse);
-
   return apiResponse.map((message: any) => ({
     id: message.id,
     content: removeAfterFirstOccurrence(message.snippet, '\r\n'),

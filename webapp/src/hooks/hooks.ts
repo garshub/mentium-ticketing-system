@@ -11,6 +11,9 @@ const TICKETS = "tickets/";
 const EMAILS = "emails/";
 const AUTH = "auth/";
 
+const getFullUrl = (route: string, endpoint: string = "") =>
+  `${BASE_URL}${route}${endpoint}`;
+
 const fetchAllTickets = async () => {
   const result = await axios.get(BASE_URL + TICKETS);
   return result.data;
@@ -91,6 +94,19 @@ export const loginUser = async (loginParams: LoginParams) => {
     return response;
   } catch (error) {
     console.error("Error during login:", error);
+    throw error;
+  }
+};
+
+export const linkUserWithTicket = async (uid: string, tid: string) => {
+  try {
+    const response = axios.patch(
+      getFullUrl(TICKETS, `link-ticket-user/${uid}/${tid}`)
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error during linking user with ticket:", error);
     throw error;
   }
 };

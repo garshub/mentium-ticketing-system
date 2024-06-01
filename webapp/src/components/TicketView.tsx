@@ -25,34 +25,51 @@ import { FaRegUserCircle } from "react-icons/fa";
 import {
   createMessageAndSendEmail,
   fetchMessagesFromThread,
+  linkUserWithTicket,
   updateTicket,
 } from "../hooks/hooks";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
+const TicketView: React.FC<TicketViewProps> = ({
+  ticket,
+  onBack,
+  currentUser,
+}) => {
   const [messages, setMessages] = useState<MessageProp[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [status, setStatus] = useState(ticket.status);
   const [priority, setPriority] = useState(ticket.priority);
+  const [assignedUser, setAssignedUser] = useState(ticket.user);
 
-  // Sort messages on component mount or when ticket changes
   useEffect(() => {
     const fetchData = async () => {
+      const loadingToastId = toast.loading("Fetching messages...");
+
       try {
         const fetchThreadMessages = await fetchMessagesFromThread(
           ticket.thread.id
         );
         if (fetchThreadMessages) {
           const sortedMessages = fetchThreadMessages.sort(
-            (a, b) =>
+            (a: MessageProp, b: MessageProp) =>
               new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           );
           setMessages(sortedMessages);
         }
-        toast.success("Messages fetched successfully!");
+        toast.update(loadingToastId, {
+          render: "Messages fetched successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } catch (error) {
-        toast.error("Error fetching messages");
+        toast.update(loadingToastId, {
+          render: "Error fetching messages",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
         console.error("Error fetching messages:", error);
       }
     };
@@ -88,29 +105,39 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
       subject: sendEmailResult.data.subject,
     };
 
-    setMessages([...messages, newMsg]);
+    setMessages((prevMessages) => [...prevMessages, newMsg]);
     setNewMessage("");
   };
 
-  const handleStatusChange = (event) => {
-    setStatus(event.target.value);
+  const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setStatus(event.target.value as string);
   };
 
-  const handlePriorityChange = (event) => {
-    setPriority(event.target.value);
+  const handlePriorityChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setPriority(event.target.value as string);
+  };
+
+  const handleAssignToCurrentUser = async () => {
+    try {
+      await linkUserWithTicket(currentUser.id, ticket.id);
+      setAssignedUser(currentUser);
+      toast.success("Ticket assigned to you successfully!");
+    } catch (error) {
+      toast.error("Error assigning ticket.");
+      console.error("Error assigning ticket:", error);
+    }
   };
 
   const handleSubmit = async () => {
-    // Handle form submission
     console.log("Status:", status, "Priority:", priority);
     try {
-      // Create a DTO object with form data
       const ticketUpdateDto: TicketUpdateDtoParams = {
         status: status,
         priority: priority,
       };
 
-      // Call the API to update the ticket
       await updateTicket(ticket.id, ticketUpdateDto);
       console.log("Ticket Updated!");
       toast.success("Ticket Successfully Updated");
@@ -119,6 +146,11 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
       console.error("Error updating ticket:", error);
     }
   };
+
+  const isAssignedToCurrentUser =
+    assignedUser && currentUser && assignedUser.id === currentUser.id;
+
+  const isStatusClosed = ticket.status === "CLOSED";
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -178,6 +210,7 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
                         variant="contained"
                         color="primary"
                         onClick={handleSendMessage}
+                        disabled={!isAssignedToCurrentUser || isStatusClosed}
                       >
                         Send
                       </Button>
@@ -256,12 +289,30 @@ const TicketView: React.FC<TicketViewProps> = ({ ticket, onBack }) => {
                 <MenuItem value="HIGH">High</MenuItem>
               </Select>
             </FormControl>
+
+            <Box sx={{ flexGrow: 1, marginY: 2 }}>
+              <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                <span style={{ fontWeight: "bold" }}>Assigned To:</span>{" "}
+                {assignedUser ? assignedUser.name : "Unassigned"}
+              </Typography>
+              {!assignedUser && (
+                <Typography
+                  variant="body2"
+                  sx={{ color: "blue", cursor: "pointer" }}
+                  onClick={handleAssignToCurrentUser}
+                >
+                  Assign to me
+                </Typography>
+              )}
+            </Box>
+
             <Box display="flex" justifyContent="flex-end">
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
                 style={{ alignSelf: "flex-end" }}
+                disabled={!isAssignedToCurrentUser}
               >
                 Submit
               </Button>

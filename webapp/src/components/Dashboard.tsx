@@ -66,6 +66,7 @@ const Dashboard: React.FC<{
               <TicketView
                 ticket={selectedTicket}
                 onBack={handleBackToTicketList}
+                currentUser={userProp}
               />
             ) : (
               <TicketList onTicketClick={handleTicketClick} />

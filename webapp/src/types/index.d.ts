@@ -16,7 +16,6 @@ export interface Ticket {
   thread: { id: string; createdAt: string; updatedAt: string };
   user: UserProp;
   messages: MessageProp[];
-  ticketHistory: unknown; //change
 }
 
 export interface TicketUpdateDtoParams {
@@ -50,6 +49,7 @@ export interface MessageProp {
 export interface TicketViewProps {
   ticket: Ticket;
   onBack: () => void;
+  currentUser: UserProp | null;
 }
 
 export interface EmailMessageParams {

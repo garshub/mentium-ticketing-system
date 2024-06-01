@@ -21,6 +21,12 @@ const statusColors: { [key: string]: string } = {
   CLOSED: "green",
 };
 
+const priorityColors: { [key: string]: string } = {
+  LOW: "green",
+  MEDIUM: "yellow",
+  HIGH: "red",
+};
+
 const TicketTable: React.FC<TicketTableProps> = ({
   status,
   tickets,
@@ -37,7 +43,7 @@ const TicketTable: React.FC<TicketTableProps> = ({
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell
                 style={{
-                  width: "10%",
+                  width: "5%",
                   position: "sticky",
                   top: 0,
                   zIndex: 1,
@@ -49,7 +55,7 @@ const TicketTable: React.FC<TicketTableProps> = ({
               </TableCell>
               <TableCell
                 style={{
-                  width: "30%",
+                  width: "15%",
                   position: "sticky",
                   top: 0,
                   zIndex: 1,
@@ -61,7 +67,7 @@ const TicketTable: React.FC<TicketTableProps> = ({
               </TableCell>
               <TableCell
                 style={{
-                  width: "20%",
+                  width: "10%",
                   position: "sticky",
                   top: 0,
                   zIndex: 1,
@@ -73,7 +79,7 @@ const TicketTable: React.FC<TicketTableProps> = ({
               </TableCell>
               <TableCell
                 style={{
-                  width: "15%",
+                  width: "10%",
                   position: "sticky",
                   top: 0,
                   zIndex: 1,
@@ -82,6 +88,18 @@ const TicketTable: React.FC<TicketTableProps> = ({
                 }}
               >
                 Requested At
+              </TableCell>
+              <TableCell
+                style={{
+                  width: "10%",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                  height: 40,
+                  fontWeight: "bold",
+                }}
+              >
+                Assigned To
               </TableCell>
               <TableCell
                 style={{
@@ -119,7 +137,23 @@ const TicketTable: React.FC<TicketTableProps> = ({
                 <TableCell align="left">
                   {<DateFormatter dateTimeString={ticket.createdAt} />}
                 </TableCell>
-                <TableCell align="left">{ticket.priority}</TableCell>
+                <TableCell align="left">
+                  {ticket.user ? ticket.user.name : "Unassigned"}
+                </TableCell>
+                <TableCell align="left">
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "10px",
+                      height: "10px",
+                      marginLeft: "8px",
+                      marginRight: "8px",
+                      backgroundColor:
+                        priorityColors[ticket.priority] || "gray",
+                    }}
+                  ></span>
+                  {ticket.priority}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

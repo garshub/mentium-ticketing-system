@@ -9,8 +9,8 @@ import {
   Grid,
 } from "@mui/material";
 import TicketTable from "./TicketTable";
-import { useFetchAllTickets } from "../hooks/hooks";
 import { Ticket, TicketListProps } from "../types";
+import { useFetchAllTickets } from "../hooks/hooks";
 
 const segregateTicketsByStatus = (tickets: Ticket[]) => {
   const orderedStatusKeys = ["NEW", "OPEN", "PENDING", "CLOSED"];
@@ -33,7 +33,7 @@ const TicketList: React.FC<TicketListProps> = ({ onTicketClick }) => {
   }, [tickets]);
 
   useEffect(() => {
-    const filtered = tickets.filter((ticket) =>
+    const filtered = tickets.filter((ticket: Ticket) =>
       ticket.id.toString().includes(searchQuery)
     );
     setFilteredTickets(filtered);
@@ -41,10 +41,10 @@ const TicketList: React.FC<TicketListProps> = ({ onTicketClick }) => {
 
   useEffect(() => {
     const filtered = tickets
-      .filter((ticket) =>
+      .filter((ticket: Ticket) =>
         filterStatus === "All" ? true : ticket.status === filterStatus
       )
-      .filter((ticket) =>
+      .filter((ticket: Ticket) =>
         filterPriority === "All" ? true : ticket.priority === filterPriority
       );
     setFilteredTickets(filtered);
