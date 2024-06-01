@@ -21,7 +21,6 @@ export class EmailsService {
 
     try {
       do {
-        console.log('Inside fetch method');
         const emailsResult = await fetchMessageList('');
         const emails: Email[] = emailsResult.data;
         console.log('Email Batch Size : ' + emails.length);

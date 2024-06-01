@@ -32,7 +32,7 @@ export class EmailsController {
     const createEmailMessageDto = new CreateMessageDto(
       result.data.id,
       sendEmailParams.body,
-      'Mentium Ticket Support',
+      process.env.SUPPORT_NAME,
       thread.ticket,
     );
     await this.messagesService.create(createEmailMessageDto);
@@ -51,7 +51,6 @@ export class EmailsController {
   async fetchMessagesFromThread(@Param('threadId') threadId: string) {
     const result = await fetchAllMessagesFromThread(threadId);
     const formatterResult = transformApiResponse(result.data);
-    console.log(formatterResult);
     return formatterResult;
   }
 }

@@ -4,10 +4,10 @@ import { EmailsController } from './emails.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from 'src/messages/messages.entity';
 import { Thread } from 'src/threads/threads.entity';
-import { Ticket } from 'src/tickets/tickets.entity';
 import { MessagesModule } from 'src/messages/messages.module';
 import { ThreadsModule } from 'src/threads/threads.module';
 import { TicketsModule } from 'src/tickets/tickets.module';
+import { Ticket } from 'src/tickets/tickets.entity';
 
 @Module({
   imports: [
