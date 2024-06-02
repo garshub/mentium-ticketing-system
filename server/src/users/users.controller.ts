@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './users.entity';
 
@@ -16,5 +16,13 @@ export class UsersController {
   @Get(':id')
   async getTicketsByUserId(@Param('id') id: number): Promise<User> {
     return await this.usersService.findTicketsForUser(id);
+  }
+
+  @Patch('link-ticket-user/:uid/:tid')
+  async linkTicketWithUser(
+    @Param('uid') uid: string,
+    @Param('tid') tid: string,
+  ) {
+    return this.usersService.linkTicketToUser(parseInt(uid, 10), tid);
   }
 }

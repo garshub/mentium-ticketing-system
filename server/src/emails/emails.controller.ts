@@ -18,7 +18,7 @@ export class EmailsController {
     private readonly threadsService: ThreadsService,
   ) {}
 
-  @Get()
+  @Get('/processEmails')
   async processEmails() {
     await this.emailsService.fetchAndProcessEmails();
     return 'Success';

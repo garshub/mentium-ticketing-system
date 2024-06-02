@@ -8,6 +8,8 @@ import { MessagesModule } from 'src/messages/messages.module';
 import { ThreadsModule } from 'src/threads/threads.module';
 import { TicketsModule } from 'src/tickets/tickets.module';
 import { Ticket } from 'src/tickets/tickets.entity';
+import { MessagesService } from 'src/messages/messages.service';
+import { TicketsService } from 'src/tickets/tickets.service';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { Ticket } from 'src/tickets/tickets.entity';
     ThreadsModule,
     TicketsModule,
   ],
-  providers: [EmailsService],
+  providers: [EmailsService, MessagesService, TicketsService],
   controllers: [EmailsController],
 })
 export class EmailsModule {}

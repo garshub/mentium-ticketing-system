@@ -10,6 +10,7 @@ const BASE_URL = "http://localhost:3000/";
 const TICKETS = "tickets/";
 const EMAILS = "emails/";
 const AUTH = "auth/";
+const USERS = "users/";
 
 const getFullUrl = (route: string, endpoint: string = "") =>
   `${BASE_URL}${route}${endpoint}`;
@@ -101,7 +102,7 @@ export const loginUser = async (loginParams: LoginParams) => {
 export const linkUserWithTicket = async (uid: string, tid: string) => {
   try {
     const response = axios.patch(
-      getFullUrl(TICKETS, `link-ticket-user/${uid}/${tid}`)
+      getFullUrl(USERS, `link-ticket-user/${uid}/${tid}`)
     );
 
     return response;

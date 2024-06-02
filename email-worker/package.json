@@ -1,0 +1,23 @@
+{
+  "name": "email-worker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:worker": "ts-node src/worker.ts",
+    "start:client": "ts-node src/client.ts",
+    "start:all": "concurrently \"npm run start:worker\" \"npm run start:client\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@temporalio/client": "^1.10.1",
+    "@temporalio/worker": "^1.10.1",
+    "axios": "^1.7.2",
+    "concurrently": "^8.2.2",
+    "dot-env": "^0.0.1",
+    "ts-node": "^10.9.2"
+  }
+}
