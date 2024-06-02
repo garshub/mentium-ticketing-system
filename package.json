@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@temporalio/client": "^1.10.1",
+    "@temporalio/worker": "^1.10.1",
     "nylas": "^7.5.0",
     "pg": "^8.11.5"
   },
