@@ -32,7 +32,6 @@ const Dashboard: React.FC<{
         width={isCollapsed ? "80px" : "300px"}
         display="flex"
         flexDirection="column"
-        transition="width 0.3s"
       >
         <Paper
           elevation={3}

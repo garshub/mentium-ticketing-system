@@ -11,6 +11,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Message from "./Message";
@@ -109,24 +110,24 @@ const TicketView: React.FC<TicketViewProps> = ({
     setNewMessage("");
   };
 
-  const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStatus(event.target.value as string);
+  const handleStatusChange = (event: SelectChangeEvent<string>) => {
+    setStatus(event.target.value);
   };
 
-  const handlePriorityChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    setPriority(event.target.value as string);
+  const handlePriorityChange = (event: SelectChangeEvent<string>) => {
+    setPriority(event.target.value);
   };
 
   const handleAssignToCurrentUser = async () => {
-    try {
-      await linkUserWithTicket(currentUser.id, ticket.id);
-      setAssignedUser(currentUser);
-      toast.success("Ticket assigned to you successfully!");
-    } catch (error) {
-      toast.error("Error assigning ticket.");
-      console.error("Error assigning ticket:", error);
+    if (currentUser) {
+      try {
+        await linkUserWithTicket(currentUser.id, ticket.id);
+        setAssignedUser(currentUser);
+        toast.success("Ticket assigned to you successfully!");
+      } catch (error) {
+        toast.error("Error assigning ticket.");
+        console.error("Error assigning ticket:", error);
+      }
     }
   };
 
