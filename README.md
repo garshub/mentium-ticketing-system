@@ -29,5 +29,30 @@ This is a ticket support platform similar to Zendesk. Clients will send emails t
   - Install dependencies: `npm i`
   - Run: `npm run dev`
   - Front end will run on [localhost:5173/](localhost:5173/)
- 
-    
+
+## Flow:
+
+- SignIn using these credentials:
+  - demo1@mentium.com // demo@1234
+  - demo2@mentium.com // demo@1234
+
+- or Create your own user using this curl command:
+ `curl -X POST \
+  http://localhost:3000/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email":"agent@mentium.com",
+    "password":"demo@1234",
+    "name":"Bart Simpson"
+}'
+`
+
+- On successful login, you will see your Dashboard with all created tickets. Search with Ticket#, filter by ticket Status or Priority.
+  
+- Click on a ticket to view its details.
+  - Send & Submit button will be disabled
+  - Assign the ticket to yourself (Click on Assign to me) to enable buttons
+  - Write a messag and click Send to send a rply to the customer.
+  - Set Status & Priority and click Submit to update the ticket.
+
+
