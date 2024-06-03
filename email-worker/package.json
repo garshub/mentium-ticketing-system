@@ -4,9 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:worker": "ts-node src/worker.ts",
-    "start:client": "ts-node src/client.ts",
-    "start:all": "concurrently \"npm run start:worker\" \"npm run start:client\""
+    "build": "npx tsc",
+    "start:worker": "node dist/worker.js",
+    "start:schedule": "node dist/start-schedule.js",
+    "start:all": "concurrently \"npm run start:worker\" \"npm run start:schedule\""
   },
   "keywords": [],
   "author": "",

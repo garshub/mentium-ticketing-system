@@ -50,19 +50,19 @@ services:
       - default
 
   #Email Workflow Service
-  email-service:
-    build:
-      context: ./email-worker
-      dockerfile: Dockerfile
-    command: ["npm", "run", "start:all"]
-    depends_on:
-      - temporal
-      - server
-    environment:
-      SERVER_URL: http://localhost:3000/
-      PROCESS_EMAILS_ENDPOINT: emails/processEmails
-    networks:
-      - default
+  # email-service:
+  #   build:
+  #     context: ./email-worker
+  #     dockerfile: Dockerfile
+  #   command: ["npm", "run", "start:all"]
+  #   depends_on:
+  #     - temporal
+  #     - server
+  #   environment:
+  #     SERVER_URL: server:3000
+  #     PROCESS_EMAILS_ENDPOINT: /emails/processEmails
+  #   networks:
+  #     - default
 
 networks:
   default:

@@ -1,10 +1,8 @@
-FROM node:18-alpine
+FROM arm64v8/node
 
 WORKDIR /usr/email-worker
 
 COPY package*.json ./
-
-COPY tsconfig.json ./
 
 RUN npm install
 
@@ -12,6 +10,6 @@ COPY . .
 
 COPY .env .env
 
-COPY src ./src
+RUN npm run build
 
 CMD ["npm", "run", "start:all"]
