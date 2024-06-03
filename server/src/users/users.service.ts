@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
@@ -31,16 +31,23 @@ export class UsersService {
   }
 
   async linkTicketToUser(uid: number, tid: string) {
-    const ticket = await this.ticketsService.findOne(tid);
-    const user = await this.usersRepository.findOneBy({ id: uid });
-    if (ticket && user) {
+    try {
+      const ticket = await this.ticketsService.findOne(tid);
+      const user = await this.usersRepository.findOneBy({ id: uid });
+
+      if (!ticket || !user) {
+        throw new BadRequestException('Incorrect Ticket Id or User Id');
+      }
+
       if (!user.ticket) {
         user.ticket = [];
       }
       user.ticket.push(ticket);
       await this.usersRepository.save(user);
+    } catch (error) {
+      console.log('Error linking user with ticket: ' + error.message);
+      throw error;
     }
-    console.log('Error linking user with ticket');
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

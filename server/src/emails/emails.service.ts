@@ -25,7 +25,7 @@ export class EmailsService {
         const emails: Email[] = emailsResult.data;
         console.log('Email Batch Size : ' + emails.length);
         pageToken = emailsResult.nextCursor;
-        console.log('Has page token' + pageToken);
+        console.log('Has page token: ' + pageToken);
         this.processEmails(emails);
       } while (pageToken);
     } catch (error) {

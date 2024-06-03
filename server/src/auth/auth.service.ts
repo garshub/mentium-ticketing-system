@@ -17,11 +17,16 @@ export class AuthService {
   ) {}
 
   async validateUser(loginParams: LoginParams): Promise<any> {
-    const user = await this.usersService.findOneByEmail(loginParams.email);
-    if (user && (await bcrypt.compare(loginParams.password, user.password))) {
-      return user;
+    try {
+      const user = await this.usersService.findOneByEmail(loginParams.email);
+      if (user && (await bcrypt.compare(loginParams.password, user.password))) {
+        return user;
+      }
+      throw new UnauthorizedException('Unauthorized User');
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-    return null;
   }
 
   async login(user: any) {

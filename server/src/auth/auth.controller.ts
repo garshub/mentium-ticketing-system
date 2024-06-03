@@ -18,11 +18,21 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginParams: LoginParams) {
-    const user = await this.authService.validateUser(loginParams);
-    if (!user) {
-      return { message: 'Invalid credentials' };
+    try {
+      const user = await this.authService.validateUser(loginParams);
+      if (!user) {
+        return { message: 'Invalid credentials' };
+      }
+      return this.authService.login(user);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    return this.authService.login(user);
   }
 
   @Post('register')
