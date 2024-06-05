@@ -1,11 +1,11 @@
 # Ticket Support Platform
 
 ## Description
-This is a ticket support platform similar to Zendesk. Clients will send emails to a support email address (mentiumcodechallenge@outlook.com). Each incoming email will be linked to an existing ticket if it belongs to a thread, or it will create a new ticket if it starts a new thread. They will receive an acknowledgment email. The user should be able to update the status & priority of a ticket, assign it to themselves and reply to the ticket directly from the dashboard. 
+This is a ticket support platform similar to Zendesk. Clients will send emails to a support email address (mentiumcodechallenge@outlook.com). Each incoming email will be linked to an existing ticket if it belongs to a thread, or it will create a new ticket if it starts a new thread. They will receive an acknowledgment email. The user should be able to update the status & priority of a ticket, assign it to themselves and reply to the ticket directly from the dashboard. Application has an inbuilt ML model to suggest replies based on customer's last email.
 
 
 ## Technologies
-- **Backend**: Typescript, Nest.js, Type ORM, Docker, Temporal.io (workflow scheduling), PostgreSQL
+- **Backend**: Typescript, Nest.js, Type ORM, Docker, Temporal.io (workflow scheduling), PostgreSQL, Numpy
 - **Frontend**: React.js, Material UI, Vite.js
 
 ## Build Instructions:
@@ -16,6 +16,7 @@ This is a ticket support platform similar to Zendesk. Clients will send emails t
     - Postgres: [localhost:5432/](localhost:5432/)
     - Temporal: [localhost:8233/](localhost:8233/)
     - Server: [localhost:3000/](localhost:3000/)
+    - Nlp: [localhost:5004/](localhost:5004/)
 
 - Build email workflow:
   - Change directory `cd email-worker`
