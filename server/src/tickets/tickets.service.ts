@@ -65,6 +65,10 @@ export class TicketsService {
     return this.ticketRepository.save(ticket);
   }
 
+  async saveTicket(ticket: Ticket): Promise<Ticket> {
+    return this.ticketRepository.save(ticket);
+  }
+
   async updatePriority(id: string, priority: TicketPriority): Promise<Ticket> {
     const ticket = await this.findOne(id);
     ticket.priority = priority;

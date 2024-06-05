@@ -39,11 +39,22 @@ export class UsersService {
         throw new BadRequestException('Incorrect Ticket Id or User Id');
       }
 
+      // Initialize the ticket array if it's not already initialized
       if (!user.ticket) {
         user.ticket = [];
       }
-      user.ticket.push(ticket);
-      await this.usersRepository.save(user);
+
+      // Check if the ticket is already associated with the user
+      const isTicketAssociated = user.ticket.some((t) => t.id === ticket.id);
+      if (isTicketAssociated) {
+        throw new BadRequestException('Ticket already linked to user');
+      }
+
+      // Associate the ticket with the user
+      ticket.user = user;
+
+      // Save the ticket to update the relationship
+      await this.ticketsService.saveTicket(ticket);
     } catch (error) {
       console.log('Error linking user with ticket: ' + error.message);
       throw error;
