@@ -18,6 +18,7 @@ import Message from "./Message";
 import {
   EmailMessageParams,
   MessageProp,
+  NlpParams,
   TicketUpdateDtoParams,
   TicketViewProps,
 } from "../types";
@@ -26,6 +27,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import {
   createMessageAndSendEmail,
   fetchMessagesFromThread,
+  getNlpSuggestions,
   linkUserWithTicket,
   updateTicket,
 } from "../hooks/hooks";
@@ -42,6 +44,9 @@ const TicketView: React.FC<TicketViewProps> = ({
   const [status, setStatus] = useState(ticket.status);
   const [priority, setPriority] = useState(ticket.priority);
   const [assignedUser, setAssignedUser] = useState(ticket.user);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,7 +137,6 @@ const TicketView: React.FC<TicketViewProps> = ({
   };
 
   const handleSubmit = async () => {
-    console.log("Status:", status, "Priority:", priority);
     try {
       const ticketUpdateDto: TicketUpdateDtoParams = {
         status: status,
@@ -146,6 +150,39 @@ const TicketView: React.FC<TicketViewProps> = ({
       toast.error("Error Updating Ticket.");
       console.error("Error updating ticket:", error);
     }
+  };
+
+  const getLastMessageFromRequester = () => {
+    const requesterMessages = messages.filter(
+      (message) => message.senderName === ticket.requesterName
+    );
+    return requesterMessages.pop();
+  };
+
+  const lastMessageFromRequester = getLastMessageFromRequester();
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const data: NlpParams = {
+        input_text: lastMessageFromRequester
+          ? lastMessageFromRequester.content
+          : "",
+      };
+      try {
+        const suggestions = await getNlpSuggestions(data);
+        setSuggestions(suggestions);
+        setError(null); // Clear any previous errors
+      } catch (error: unknown) {
+        setError((error as Error).message);
+      }
+    };
+
+    fetchSuggestions();
+  }, [lastMessageFromRequester]);
+
+  const handleSuggestionChange = (event: SelectChangeEvent<string>) => {
+    setSelectedSuggestion(event.target.value);
+    setNewMessage(event.target.value);
   };
 
   const isAssignedToCurrentUser =
@@ -220,6 +257,30 @@ const TicketView: React.FC<TicketViewProps> = ({
                   style: { height: "auto" },
                 }}
               />
+            </Paper>
+            <Paper>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="suggestions-select-label">
+                  Suggestions
+                </InputLabel>
+                <Select
+                  labelId="suggestions-select-label"
+                  id="suggestion-select"
+                  value={selectedSuggestion}
+                  onChange={handleSuggestionChange}
+                >
+                  {suggestions.map((suggestion, index) => (
+                    <MenuItem key={index} value={suggestion}>
+                      {suggestion}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {error && (
+                <Typography color="error" variant="body2">
+                  {error}
+                </Typography>
+              )}
             </Paper>
           </Box>
         </Paper>

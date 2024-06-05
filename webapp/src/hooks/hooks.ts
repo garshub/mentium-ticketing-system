@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import {
   EmailMessageParams,
   LoginParams,
+  NlpParams,
   TicketUpdateDtoParams,
 } from "../types";
 
@@ -11,6 +12,7 @@ const TICKETS = "tickets/";
 const EMAILS = "emails/";
 const AUTH = "auth/";
 const USERS = "users/";
+const NLP_URL = "http://localhost:5004/";
 
 const getFullUrl = (route: string, endpoint: string = "") =>
   `${BASE_URL}${route}${endpoint}`;
@@ -108,6 +110,28 @@ export const linkUserWithTicket = async (uid: string, tid: string) => {
     return response;
   } catch (error) {
     console.error("Error during linking user with ticket:", error);
+    throw error;
+  }
+};
+
+export const getNlpSuggestions = async (data: NlpParams) => {
+  try {
+    const response = await axios.post<string[]>(
+      // getFullUrl(NLP_URL, "/suggest"),
+      NLP_URL + "/suggest",
+      data
+    );
+    if (response && response.data) {
+      return response.data;
+    } else {
+      return [
+        "We will get back to you soon.",
+        "Please provide more details",
+        "We are working on your request.",
+      ];
+    }
+  } catch (error) {
+    console.error("Error fetching message suggestions", error);
     throw error;
   }
 };

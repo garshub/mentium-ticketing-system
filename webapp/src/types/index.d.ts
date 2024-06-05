@@ -64,3 +64,7 @@ export interface LoginParams {
   email: string;
   password: string;
 }
+
+export interface NlpParams {
+  input_text: string;
+}
