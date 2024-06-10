@@ -52,8 +52,8 @@ This is a ticket support platform similar to Zendesk. Clients will send emails t
   
 - Click on a ticket to view its details.
   - Send & Submit button will be disabled
-  - Assign the ticket to yourself (Click on Assign to me) to enable buttons
-  - Write a messag and click Send to send a rply to the customer.
+  - Assign the ticket to yourself by clicking 'Assign to me' to enable buttons and ticket actions.
+  - Write a message and click Send to send a reply to the customer.
   - Set Status & Priority and click Submit to update the ticket.
 
 
